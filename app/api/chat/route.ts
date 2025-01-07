@@ -1,9 +1,8 @@
 import { NextResponse } from 'next/server'
 
-// 云服务器的API地址
-const API_URL = 'https://chat.pipimove.com'
-// 使用正确的 API Key
-const API_KEY = 'L2M85AKH4yVU3KProNMfi3FasitJVp8XHbZvmi4EcRFGSpruDhNg'
+// 云服务器的API地址 - 确保使用环境变量
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://chat.pipimove.com'
+const API_KEY = process.env.API_KEY || 'L2M85AKH4yVU3KProNMfi3FasitJVp8XHbZvmi4EcRFGSpruDhNg'
 
 export async function POST(req: Request) {
   try {
@@ -16,37 +15,77 @@ export async function POST(req: Request) {
       wallet_data: body.walletData || null
     }
 
+    // 添加请求诊断信息
+    console.log('Attempting to connect to:', API_URL)
+    console.log('Request headers:', {
+      'Content-Type': 'application/json',
+      'X-API-Key': `${API_KEY.substring(0, 4)}...`,
+      'Accept': 'application/json'
+    })
+
+    // 设置超时
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), 15000) // 15秒超时
+
     // 调用云服务器API
     const response = await fetch(API_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'X-API-Key': API_KEY,
-        'Accept': 'application/json'
+        'Accept': 'application/json',
+        'Origin': process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : '*'
       },
-      body: JSON.stringify(requestData)
+      body: JSON.stringify(requestData),
+      signal: controller.signal
     })
+
+    clearTimeout(timeoutId)
+
+    // 详细的错误处理
     if (!response.ok) {
       const errorText = await response.text()
-      console.error('API response error:', {
+      const errorDetails = {
         status: response.status,
         statusText: response.statusText,
-        errorText
-      })
-      
-      // Return a friendlier message for 401 error
-      if (response.status === 401) {
-        return NextResponse.json(
-          {
-            text: 'Server authentication failed, please contact the administrator 🔑',
-            type: 'error',
-            actions: []
-          },
-          { status: 401 }
-        )
+        errorText,
+        url: API_URL,
+        vercelEnv: process.env.VERCEL_ENV || 'unknown',
+        vercelUrl: process.env.VERCEL_URL || 'unknown'
       }
-      
-      throw new Error(`API call failed: ${response.status} ${response.statusText}`)
+      console.error('API response error:', errorDetails)
+
+      // 针对不同错误返回不同消息
+      switch (response.status) {
+        case 401:
+          return NextResponse.json({
+            text: 'Authentication failed. Please try again later.',
+            type: 'error',
+            actions: [],
+            content: 'Authentication failed. Please try again later.'
+          }, { status: 401 })
+        case 404:
+          return NextResponse.json({
+            text: 'API endpoint not found. Please check the configuration.',
+            type: 'error',
+            actions: [],
+            content: 'API endpoint not found. Please check the configuration.'
+          }, { status: 404 })
+        case 429:
+          return NextResponse.json({
+            text: 'Too many requests. Please try again later.',
+            type: 'error',
+            actions: [],
+            content: 'Too many requests. Please try again later.'
+          }, { status: 429 })
+        default:
+          return NextResponse.json({
+            text: `Server error: ${response.status}. Please try again later.`,
+            type: 'error',
+            actions: [],
+            content: `Server error: ${response.status}. Please try again later.`
+          }, { status: response.status })
+      }
     }
 
     const data = await response.json()
@@ -59,12 +98,23 @@ export async function POST(req: Request) {
     
   } catch (error) {
     console.error('Chat API detailed error:', error)
+    
+    // 检查是否是超时错误
+    if (error instanceof Error && error.name === 'AbortError') {
+      return NextResponse.json({
+        text: 'Request timed out. Please try again.',
+        type: 'error',
+        actions: [],
+        content: 'Request timed out. Please try again.'
+      }, { status: 408 })
+    }
+
     return NextResponse.json(
       { 
-        text: `Sorry, an error occurred while connecting to the server: ${(error as Error).message} 🥺`,
+        text: `Connection error: ${(error as Error).message}`,
         type: 'error', 
         actions: [],
-        content: `Sorry, an error occurred while connecting to the server: ${(error as Error).message} 🥺`
+        content: `Connection error: ${(error as Error).message}`
       },
       { status: 500 }
     )
