@@ -383,10 +383,14 @@ export default function Home() {
                     ? 'bg-gradient-to-r from-pink-400 to-purple-400 text-white'
                     : 'bg-white shadow-md text-gray-800'
                 } max-w-[85%]`}>
-                  {msg.content.includes('<table') || msg.content.includes('<a') ? (
-                    <div dangerouslySetInnerHTML={{ __html: msg.content }} />
+                  {msg?.content ? (
+                    msg.content.includes('<table') || msg.content.includes('<a') ? (
+                      <div dangerouslySetInnerHTML={{ __html: msg.content }} />
+                    ) : (
+                      msg.content
+                    )
                   ) : (
-                    msg.content
+                    '消息内容为空'
                   )}
                   {msg.isAction && !connected && (
                     <Button 

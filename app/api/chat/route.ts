@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server'
 
 // 云服务器的API地址
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://64.176.34.72:5007/chat'
-// 使用公共的 API Key
-const PUBLIC_API_KEY = 'Hy7#mK9$pL2@vN4*xQ8'
+const API_URL = 'https://chat.pipimove.com'
+// 使用正确的 API Key
+const API_KEY = 'L2M85AKH4yVU3KProNMfi3FasitJVp8XHbZvmi4EcRFGSpruDhNg'
 
 export async function POST(req: Request) {
   try {
@@ -21,32 +21,50 @@ export async function POST(req: Request) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'X-API-Key': PUBLIC_API_KEY,
+        'X-API-Key': API_KEY,
         'Accept': 'application/json'
       },
       body: JSON.stringify(requestData)
     })
-
     if (!response.ok) {
       const errorText = await response.text()
-      console.error('API响应错误:', {
+      console.error('API response error:', {
         status: response.status,
         statusText: response.statusText,
         errorText
       })
-      throw new Error(`API调用失败: ${response.status} ${response.statusText}`)
+      
+      // Return a friendlier message for 401 error
+      if (response.status === 401) {
+        return NextResponse.json(
+          {
+            text: 'Server authentication failed, please contact the administrator 🔑',
+            type: 'error',
+            actions: []
+          },
+          { status: 401 }
+        )
+      }
+      
+      throw new Error(`API call failed: ${response.status} ${response.statusText}`)
     }
 
     const data = await response.json()
-    return NextResponse.json(data)
+    return NextResponse.json({
+      text: data.text || 'No response content',
+      type: data.type || 'text',
+      actions: data.actions || [],
+      content: data.content || data.text || ''
+    })
     
   } catch (error) {
-    console.error('Chat API详细错误:', error)
+    console.error('Chat API detailed error:', error)
     return NextResponse.json(
       { 
-        text: `抱歉，连接服务器时出现错误: ${(error as Error).message} 🥺`,
+        text: `Sorry, an error occurred while connecting to the server: ${(error as Error).message} 🥺`,
         type: 'error', 
-        actions: []
+        actions: [],
+        content: `Sorry, an error occurred while connecting to the server: ${(error as Error).message} 🥺`
       },
       { status: 500 }
     )
