@@ -71,13 +71,13 @@ export async function POST(req: Request) {
             actions: [],
             content: 'API endpoint not found. Please check the configuration.'
           }, { status: 404 })
-        case 429:
+        case 405:
           return NextResponse.json({
-            text: 'Too many requests. Please try again later.',
+            text: 'Method not allowed. Please check the request method.',
             type: 'error',
             actions: [],
-            content: 'Too many requests. Please try again later.'
-          }, { status: 429 })
+            content: 'Method not allowed. Please check the request method.'
+          }, { status: 405 })
         default:
           return NextResponse.json({
             text: `Server error: ${response.status}. Please try again later.`,
