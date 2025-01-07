@@ -1,48 +1,48 @@
 # PIPI Assistant
 
-一个基于 Next.js 构建的智能助手应用，支持与 Aptos 区块链交互。
+A Next.js-based intelligent assistant application that supports interactions with the Aptos blockchain.
 
-## 功能特性
+## Key Features
 
-- 智能对话功能
-- Aptos 钱包集成
-- PIPI 代币铸造和赎回
-- 实时余额查询
+- Intelligent conversation capabilities
+- Integration with Aptos wallet
+- PIPI token minting and redemption
+- Real-time balance inquiry
 
-## 在线体验
+## Online Experience
 
-访问 [https://your-username.github.io/your-repo](https://your-username.github.io/your-repo) 即可直接使用！
+Visit [https://your-username.github.io/your-repo](https://your-username.github.io/your-repo) to use it directly!
 
-## 本地开发
+## Local Development
 
-1. 克隆项目：
+1. Clone the project:
 ```bash
 git clone https://github.com/your-username/your-repo.git
 ```
 
-2. 安装依赖：
+2. Install dependencies:
 ```bash
 npm install
 ```
 
-3. 运行开发服务器：
+3. Run the development server:
 ```bash
 npm run dev
 ```
 
-## 部署说明
+## Deployment Instructions
 
-本项目已配置为可直接部署到 GitHub Pages。每次推送到 main 分支时会自动部署。
+This project is configured for direct deployment to GitHub Pages. It will be automatically deployed each time you push to the main branch.
 
-## 技术栈
+## Technology Stack
 
 - Next.js 14
 - TypeScript
 - Tailwind CSS
 - Aptos Wallet Adapter
 
-## 注意事项
+## Important Notes
 
-- 本项目仅用于演示目的
-- API 调用有速率限制
-- 请勿滥用服务
+- This project is for demonstration purposes only
+- API calls have rate limits
+- Please do not abuse the service
