@@ -4,6 +4,14 @@ import { NextResponse } from 'next/server'
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://chat.pipimove.com'
 const API_KEY = process.env.API_KEY || 'L2M85AKH4yVU3KProNMfi3FasitJVp8XHbZvmi4EcRFGSpruDhNg'
 
+// 获取基础URL
+const getBaseUrl = () => {
+  if (process.env.VERCEL_URL) {
+    return `https://${process.env.VERCEL_URL}`
+  }
+  return process.env.NEXT_PUBLIC_API_URL || 'https://chat.pipimove.com'
+}
+
 export async function POST(req: Request) {
   try {
     const body = await req.json()
@@ -17,15 +25,11 @@ export async function POST(req: Request) {
 
     // 添加请求诊断信息
     console.log('Attempting to connect to:', API_URL)
-    console.log('Request headers:', {
-      'Content-Type': 'application/json',
-      'X-API-Key': `${API_KEY.substring(0, 4)}...`,
-      'Accept': 'application/json'
-    })
+    console.log('Base URL:', getBaseUrl())
 
     // 设置超时
     const controller = new AbortController()
-    const timeoutId = setTimeout(() => controller.abort(), 15000) // 15秒超时
+    const timeoutId = setTimeout(() => controller.abort(), 15000)
 
     // 调用云服务器API
     const response = await fetch(API_URL, {
@@ -34,10 +38,11 @@ export async function POST(req: Request) {
         'Content-Type': 'application/json',
         'X-API-Key': API_KEY,
         'Accept': 'application/json',
-        'Origin': process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : '*'
+        'Origin': getBaseUrl()
       },
       body: JSON.stringify(requestData),
-      signal: controller.signal
+      signal: controller.signal,
+      cache: 'no-store'
     })
 
     clearTimeout(timeoutId)

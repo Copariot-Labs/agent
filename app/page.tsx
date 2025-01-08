@@ -178,7 +178,7 @@ export default function Home() {
 
   const sendToLLM = async (message: string) => {
     try {
-      setIsThinking(true)  // 开始思考
+      setIsThinking(true)
       const response = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
