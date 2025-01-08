@@ -4,7 +4,8 @@ const nextConfig = {
     return [
       {
         source: '/api/chat',
-        destination: 'https://chat.pipimove.com'
+        destination: 'https://chat.pipimove.com',
+        basePath: false
       }
     ]
   },

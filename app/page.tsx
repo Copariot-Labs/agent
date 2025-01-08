@@ -179,9 +179,12 @@ export default function Home() {
   const sendToLLM = async (message: string) => {
     try {
       setIsThinking(true)
+      // 使用相对路径而不是完整 URL
       const response = await fetch('/api/chat', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json'
+        },
         body: JSON.stringify({ message }),
       })
       const data = await response.json()
@@ -226,7 +229,7 @@ export default function Home() {
         content: 'Oops, something went wrong. Shall we try again later? 😅' 
       }])
     } finally {
-      setIsThinking(false)  // 结束思考
+      setIsThinking(false)
     }
   }
 

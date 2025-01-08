@@ -1,10 +1,4 @@
 {
-  "rewrites": [
-    {
-      "source": "/api/chat",
-      "destination": "https://chat.pipimove.com"
-    }
-  ],
   "headers": [
     {
       "source": "/api/(.*)",
