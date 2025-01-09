@@ -1,20 +1,15 @@
 import { NextResponse } from 'next/server'
 
-if (!process.env.API_KEY || !process.env.NEXT_PUBLIC_BASE_URL) {
-  throw new Error('Missing required environment variables')
+if (!process.env.API_KEY) {
+  throw new Error('API_KEY is required')
 }
-
-// 根据环境选择 API URL
-const API_URL = process.env.VERCEL 
-  ? '/api/chat'  // Vercel 环境使用内部路由
-  : process.env.NEXT_PUBLIC_BASE_URL  // 本地开发使用完整 URL
 
 export async function POST(req: Request) {
   try {
     const controller = new AbortController()
     const timeoutId = setTimeout(() => controller.abort(), 15000)
 
-    const response = await fetch(API_URL, {
+    const response = await fetch('https://chat.pipimove.com', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

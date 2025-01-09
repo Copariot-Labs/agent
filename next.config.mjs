@@ -4,7 +4,9 @@ const nextConfig = {
     return [
       {
         source: '/api/chat',
-        destination: process.env.NEXT_PUBLIC_BASE_URL,
+        destination: process.env.VERCEL 
+          ? '/api/chat'  // Vercel 环境不需要重写
+          : 'https://chat.pipimove.com'  // 本地开发重写到外部 URL
       }
     ]
   }
