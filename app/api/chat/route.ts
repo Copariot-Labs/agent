@@ -9,7 +9,7 @@ export async function POST(req: Request) {
     const controller = new AbortController()
     const timeoutId = setTimeout(() => controller.abort(), 15000)
 
-    const response = await fetch('https://chat.pipimove.com', {
+    const response = await fetch('https://chat.pipimove.com/chat', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
