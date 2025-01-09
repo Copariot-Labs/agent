@@ -28,9 +28,9 @@ export async function POST(req: Request) {
 
     return NextResponse.json(await response.json())
     
-  } catch (error: any) {
-    const status = error.name === 'AbortError' ? 408 : 500
-    const message = error.name === 'AbortError' ? 'Request timeout' : 'Server error'
+  } catch (error: Error | unknown) {
+    const status = error instanceof Error && error.name === 'AbortError' ? 408 : 500
+    const message = error instanceof Error && error.name === 'AbortError' ? 'Request timeout' : 'Server error'
     return NextResponse.json({ text: message, type: 'error' }, { status })
   }
 }
