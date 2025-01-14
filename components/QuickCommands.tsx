@@ -8,8 +8,8 @@ export default function QuickCommands({ onSelect }: QuickCommandsProps) {
   const commands = [
     'How to mint', 
     'How to redeem', 
-    'Check PIPI balance',
-    'Check all balances'
+    'Check all balances',
+    'Faucet'
   ]
 
   return (

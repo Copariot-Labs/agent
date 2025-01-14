@@ -13,6 +13,7 @@ import { Aptos, AptosConfig, Network } from "@aptos-labs/ts-sdk"
 import { mintPIPI } from '@/components/MintInterface'
 import { getBalances } from '@/utils/balance'
 import { redeemPIPI } from '@/components/RedeemInterface'
+import { claimMove, claimUSDT } from '@/components/FaucetInterface'
 
 type BalancesData = {
   move: number;
@@ -31,7 +32,7 @@ interface Message {
   role: string;
   content: string;
   isAction?: boolean;
-  actionType?: 'mint' | 'redeem' | 'balance';
+  actionType?: 'mint' | 'redeem' | 'balance' | 'faucet';
   actionData?: ActionData;
 }
 
@@ -172,6 +173,25 @@ export default function Home() {
       return;
     }
 
+    // Check for faucet-related keywords
+    if (normalizedCommand.includes('faucet')) {
+      if (!connected) {
+        setMessages(prev => [...prev, { 
+          role: 'assistant', 
+          content: 'To use the faucet, we need to connect your wallet first. Would you like to connect now?', 
+          isAction: true 
+        }]);
+      } else {
+        setMessages(prev => [...prev, { 
+          role: 'assistant', 
+          content: 'Please select which token you would like to claim. For native MOVE tokens, please visit the official faucet:', 
+          isAction: true,
+          actionType: 'faucet'
+        }]);
+      }
+      return;
+    }
+
     // If not a specific command, send to LLM
     sendToLLM(command)
   }
@@ -308,33 +328,23 @@ export default function Home() {
         setMessages(prev => [...prev, { 
           role: 'assistant', 
           content: `
-            <div class="balance-table">
-              <table class="w-full text-left border-collapse">
-                <thead>
-                  <tr>
-                    <th class="py-2 px-4 bg-purple-100">Token</th>
-                    <th class="py-2 px-4 bg-purple-100">Balance</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td class="py-2 px-4 border-t">MOVE</td>
-                    <td class="py-2 px-4 border-t">${balances.move.toFixed(8)}</td>
-                  </tr>
-                  <tr>
-                    <td class="py-2 px-4 border-t">USDT</td>
-                    <td class="py-2 px-4 border-t">${balances.usdt.toFixed(2)}</td>
-                  </tr>
-                  <tr>
-                    <td class="py-2 px-4 border-t">WeUSD</td>
-                    <td class="py-2 px-4 border-t">${balances.weusd.toFixed(2)}</td>
-                  </tr>
-                  <tr>
-                    <td class="py-2 px-4 border-t">PIPI</td>
-                    <td class="py-2 px-4 border-t">${balances.pipi.toFixed(2)}</td>
-                  </tr>
-                </tbody>
-              </table>
+            <div class="grid grid-cols-2 gap-4">
+              <div class="bg-gradient-to-br from-orange-50 to-amber-50 p-4 rounded-2xl border border-amber-200">
+                <div class="text-sm text-amber-700 mb-1">MOVE</div>
+                <div class="text-xl font-bold text-amber-800">${balances.move.toFixed(8)}</div>
+              </div>
+              <div class="bg-gradient-to-br from-rose-50 to-pink-50 p-4 rounded-2xl border border-rose-200">
+                <div class="text-sm text-rose-700 mb-1">USDT</div>
+                <div class="text-xl font-bold text-rose-800">${balances.usdt.toFixed(2)}</div>
+              </div>
+              <div class="bg-gradient-to-br from-teal-50 to-emerald-50 p-4 rounded-2xl border border-teal-200">
+                <div class="text-sm text-teal-700 mb-1">WeUSD</div>
+                <div class="text-xl font-bold text-teal-800">${balances.weusd.toFixed(2)}</div>
+              </div>
+              <div class="bg-gradient-to-br from-[#FFDD24] to-amber-100 p-4 rounded-2xl border border-amber-200">
+                <div class="text-sm text-amber-800 mb-1">PIPI</div>
+                <div class="text-xl font-bold text-amber-900">${balances.pipi.toFixed(2)}</div>
+              </div>
             </div>
           `,
           isAction: true,
@@ -361,16 +371,46 @@ export default function Home() {
     }
   }
 
+  const handleFaucetClaim = async (type: 'move' | 'usdt') => {
+    try {
+      if (!account) {
+        setMessages(prev => [...prev, { 
+          role: 'assistant', 
+          content: 'Please connect your wallet first!' 
+        }])
+        return
+      }
+
+      setIsThinking(true)
+      const claimFunction = type === 'move' ? claimMove : claimUSDT
+      const result = await claimFunction(signAndSubmitTransaction, account)
+      const shortHash = `${result.hash.slice(0, 6)}...${result.hash.slice(-4)}`
+      const explorerUrl = `https://explorer.movementnetwork.xyz/txn/${result.hash}?network=testnet`
+      setMessages(prev => [...prev, { 
+        role: 'assistant', 
+        content: `Success! 🎉 Claimed ${type.toUpperCase()}! Tx: <a href="${explorerUrl}" target="_blank" class="text-blue-500 hover:text-blue-700 underline">${shortHash}</a>` 
+      }])
+    } catch (error) {
+      console.error('Claim error:', error)
+      setMessages(prev => [...prev, { 
+        role: 'assistant', 
+        content: `Sorry, ${type.toUpperCase()} claim failed. Please try again 😢` 
+      }])
+    } finally {
+      setIsThinking(false)
+    }
+  }
+
   return (
-    <div className="container mx-auto p-4 bg-gradient-to-br from-pink-100 via-purple-100 to-blue-100 min-h-screen flex items-center justify-center">
+    <div className="container mx-auto p-4 bg-gradient-to-br from-[#FFDD24] via-amber-100 to-orange-50 min-h-screen flex items-center justify-center">
       <WalletSelector
         wallets={wallets ? [...wallets] : []}
         onSelect={handleWalletSelect}
         isOpen={isWalletSelectorOpen}
         onClose={() => setIsWalletSelectorOpen(false)}
       />
-      <Card className="w-full max-w-2xl mx-auto shadow-xl border-0 rounded-3xl overflow-hidden h-[90vh] flex flex-col">
-        <CardHeader className="bg-gradient-to-r from-pink-400 via-purple-400 to-blue-400 p-4">
+      <Card className="w-full max-w-2xl mx-auto shadow-xl border-0 rounded-3xl overflow-hidden h-[90vh] flex flex-col bg-white/90 backdrop-blur-sm">
+        <CardHeader className="bg-gradient-to-r from-amber-500 to-orange-400 p-4">
           <CardTitle className="text-center text-white flex items-center justify-center text-xl font-bold">
             <Sparkles className="mr-2" />
             🐸 PIPI Agent 🐸
@@ -383,22 +423,22 @@ export default function Home() {
               <div key={index} className={`mb-4 ${msg.role === 'user' ? 'text-right' : 'text-left'}`}>
                 <div className={`inline-block p-3 rounded-2xl ${
                   msg.role === 'user' 
-                    ? 'bg-gradient-to-r from-pink-400 to-purple-400 text-white'
-                    : 'bg-white shadow-md text-gray-800'
+                    ? 'bg-[#FFDD24] text-gray-800'
+                    : 'bg-gradient-to-br from-orange-50 to-amber-50 shadow-md text-gray-800'
                 } max-w-[85%]`}>
                   {msg?.content ? (
-                    msg.content.includes('<table') || msg.content.includes('<a') ? (
+                    msg.content.includes('<') ? (
                       <div dangerouslySetInnerHTML={{ __html: msg.content }} />
                     ) : (
                       msg.content
                     )
                   ) : (
-                    '消息内容为空'
+                    'Message content is empty'
                   )}
                   {msg.isAction && !connected && (
                     <Button 
                       onClick={handleConnectWallet}
-                      className="mt-2 bg-blue-500 hover:bg-blue-600 text-white rounded-full transition-all duration-200 ease-in-out transform hover:scale-105"
+                      className="mt-2 bg-gradient-to-r from-amber-500 to-orange-400 hover:from-amber-600 hover:to-orange-500 text-white rounded-full transition-all duration-200 ease-in-out transform hover:scale-105"
                     >
                       Connect Wallet
                     </Button>
@@ -410,7 +450,7 @@ export default function Home() {
                       handleMint(amount)
                     }} className="mt-3">
                       <Input name="amount" type="number" placeholder="Enter Mint amount" className="mb-2" />
-                      <Button type="submit" className="w-full bg-green-500 hover:bg-green-600 text-white">Mint</Button>
+                      <Button type="submit" className="w-full bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-600 hover:to-emerald-600 text-white">Mint</Button>
                     </form>
                   )}
                   {msg.isAction && connected && msg.actionType === 'redeem' && (
@@ -420,11 +460,37 @@ export default function Home() {
                       handleRedeem(amount)
                     }} className="mt-3">
                       <Input name="amount" type="number" placeholder="Enter Redeem amount" className="mb-2" />
-                      <Button type="submit" className="w-full bg-yellow-500 hover:bg-yellow-600 text-white">Redeem</Button>
+                      <Button type="submit" className="w-full bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white">Redeem</Button>
                     </form>
                   )}
+                  {msg.isAction && connected && msg.actionType === 'faucet' && (
+                    <div className="mt-3 space-y-3">
+                      <div className="flex gap-2">
+                        <Button
+                          onClick={() => handleFaucetClaim('move')}
+                          className="flex-1 bg-gradient-to-r from-amber-500 to-orange-400 hover:from-amber-600 hover:to-orange-500 text-white"
+                        >
+                          Claim FA Move
+                        </Button>
+                        <Button
+                          onClick={() => handleFaucetClaim('usdt')}
+                          className="flex-1 bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white"
+                        >
+                          Claim USDT
+                        </Button>
+                      </div>
+                      <a 
+                        href="https://faucet.movementnetwork.xyz/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block text-center p-2 bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-600 hover:to-emerald-600 text-white rounded-xl transition-all duration-200 ease-in-out transform hover:scale-105"
+                      >
+                        🎯 Get Native MOVE from Official Faucet
+                      </a>
+                    </div>
+                  )}
                   {msg.isAction && connected && msg.actionType === 'balance' && msg.actionData && 'balance' in msg.actionData && (
-                    <p className="mt-3 text-2xl font-bold text-purple-600">{msg.actionData.balance} PIPI</p>
+                    <p className="mt-3 text-2xl font-bold text-amber-700">{msg.actionData.balance} PIPI</p>
                   )}
                 </div>
               </div>
