@@ -14,6 +14,7 @@ import { mintPIPI } from '@/components/MintInterface'
 import { getBalances } from '@/utils/balance'
 import { redeemPIPI } from '@/components/RedeemInterface'
 import { claimMove, claimUSDT } from '@/components/FaucetInterface'
+import ReactMarkdown from 'react-markdown'
 
 type BalancesData = {
   move: number;
@@ -200,9 +201,8 @@ export default function Home() {
     try {
       setIsThinking(true)
       
-      // 修改超时时间为120秒
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 120000); // 120秒超时
+      const timeoutId = setTimeout(() => controller.abort(), 120000);
 
       const response = await fetch('/api/chat', {
         method: 'POST',
@@ -217,7 +217,7 @@ export default function Home() {
       
       const data = await response.json()
       
-      // 添加LLM的回复
+      // 直接使用原始的 markdown 文本
       setMessages(prev => [...prev, { 
         role: 'assistant', 
         content: data.text 
@@ -440,11 +440,11 @@ export default function Home() {
                     : 'bg-gradient-to-br from-orange-50 to-amber-50 shadow-md text-gray-800'
                 } max-w-[85%]`}>
                   {msg?.content ? (
-                    msg.content.includes('<') ? (
-                      <div dangerouslySetInnerHTML={{ __html: msg.content }} />
-                    ) : (
-                      msg.content
-                    )
+                    <div className={`prose prose-amber prose-headings:mb-2 prose-headings:mt-0 prose-p:mb-2 prose-p:mt-0 prose-li:mb-0 prose-li:mt-0 max-w-none ${
+                      msg.role === 'user' ? 'text-gray-800' : 'text-gray-800'
+                    }`}>
+                      <ReactMarkdown>{msg.content}</ReactMarkdown>
+                    </div>
                   ) : (
                     'Message content is empty'
                   )}
