@@ -199,14 +199,22 @@ export default function Home() {
   const sendToLLM = async (message: string) => {
     try {
       setIsThinking(true)
-      // 使用相对路径而不是完整 URL
+      
+      // 修改超时时间为120秒
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 120000); // 120秒超时
+
       const response = await fetch('/api/chat', {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({ message }),
+        signal: controller.signal
       })
+
+      clearTimeout(timeoutId);
+      
       const data = await response.json()
       
       // 添加LLM的回复
@@ -244,9 +252,14 @@ export default function Home() {
       }
     } catch (error) {
       console.error('Error:', error)
+      // 根据错误类型显示不同的错误信息
+      const errorMessage = error instanceof DOMException && error.name === 'AbortError'
+        ? 'Request timeout. The server is taking too long to respond. Please try again. 😅'
+        : 'Oops, something went wrong. Shall we try again later? 😅';
+        
       setMessages(prev => [...prev, { 
         role: 'assistant', 
-        content: 'Oops, something went wrong. Shall we try again later? 😅' 
+        content: errorMessage 
       }])
     } finally {
       setIsThinking(false)

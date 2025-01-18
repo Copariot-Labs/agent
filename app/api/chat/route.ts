@@ -7,7 +7,7 @@ if (!process.env.API_KEY) {
 export async function POST(req: Request) {
   try {
     const controller = new AbortController()
-    const timeoutId = setTimeout(() => controller.abort(), 15000)
+    const timeoutId = setTimeout(() => controller.abort(), 120000)
 
     const response = await fetch('https://chat.pipimove.com/chat', {
       method: 'POST',
