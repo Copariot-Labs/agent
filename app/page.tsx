@@ -443,7 +443,11 @@ export default function Home() {
                     <div className={`prose prose-amber prose-headings:mb-2 prose-headings:mt-0 prose-p:mb-2 prose-p:mt-0 prose-li:mb-0 prose-li:mt-0 max-w-none ${
                       msg.role === 'user' ? 'text-gray-800' : 'text-gray-800'
                     }`}>
-                      <ReactMarkdown>{msg.content}</ReactMarkdown>
+                      {msg.content.includes('<') ? (
+                        <div dangerouslySetInnerHTML={{ __html: msg.content }} />
+                      ) : (
+                        <ReactMarkdown>{msg.content}</ReactMarkdown>
+                      )}
                     </div>
                   ) : (
                     'Message content is empty'
