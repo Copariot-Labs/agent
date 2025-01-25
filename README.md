@@ -11,13 +11,13 @@ A Next.js-based intelligent assistant application that supports interactions wit
 
 ## Online Experience
 
-Visit [https://your-username.github.io/your-repo](https://your-username.github.io/your-repo) to use it directly!
+Visit [https://agent.pipimove.](https://agent.pipimove.com) to use it directly!
 
 ## Local Development
 
 1. Clone the project:
 ```bash
-git clone https://github.com/your-username/your-repo.git
+git clone https://github.com/Copariot-Labs/agent
 ```
 
 2. Install dependencies:
