@@ -60,6 +60,24 @@ export default function Home() {
   // 使用 useWallet hook
   const { connect, disconnect, account, connected, wallets, signAndSubmitTransaction } = useWallet();
 
+  // 添加一个新的状态来控制思考过程的显示
+  const [showThinking, setShowThinking] = useState<{[key: number]: boolean}>({});
+
+  const toggleThinking = (index: number) => {
+    setShowThinking(prev => ({
+      ...prev,
+      [index]: !prev[index]
+    }));
+  };
+
+  // 处理消息内容，分离思考过程和实际回复
+  const processMessage = (content: string) => {
+    const thinkMatch = content.match(/<think>([\s\S]*?)<\/think>/);
+    const think = thinkMatch ? thinkMatch[1].trim() : null;
+    const actualContent = content.replace(/<think>[\s\S]*?<\/think>/, '').trim();
+    return { think, actualContent };
+  };
+
   const handleConnectWallet = async () => {
     if (connected) {
       await disconnect();
@@ -252,11 +270,15 @@ export default function Home() {
       }
     } catch (error) {
       console.error('Error:', error)
-      // 根据错误类型显示不同的错误信息
-      const errorMessage = error instanceof DOMException && error.name === 'AbortError'
-        ? 'Request timeout. The server is taking too long to respond. Please try again. 😅'
-        : 'Oops, something went wrong. Shall we try again later? 😅';
-        
+      let errorMessage = 'Oops, something went wrong. Shall we try again later? 😅'
+      
+      if (error instanceof DOMException && error.name === 'AbortError') {
+        errorMessage = 'Request timeout. The server is taking too long to respond. Please try again.'
+      } else if (error instanceof Error) {
+        // 添加更具体的错误信息
+        errorMessage = `Error: ${error.message} 😅`
+      }
+      
       setMessages(prev => [...prev, { 
         role: 'assistant', 
         content: errorMessage 
@@ -344,7 +366,7 @@ export default function Home() {
             <div class="grid grid-cols-2 gap-4">
               <div class="bg-gradient-to-br from-orange-50 to-amber-50 p-4 rounded-2xl border border-amber-200">
                 <div class="text-sm text-amber-700 mb-1">MOVE</div>
-                <div class="text-xl font-bold text-amber-800">${balances.move.toFixed(8)}</div>
+                <div class="text-xl font-bold text-amber-800">${balances.move.toFixed(2)}</div>
               </div>
               <div class="bg-gradient-to-br from-rose-50 to-pink-50 p-4 rounded-2xl border border-rose-200">
                 <div class="text-sm text-rose-700 mb-1">USDT</div>
@@ -444,7 +466,31 @@ export default function Home() {
                       msg.role === 'user' ? 'text-gray-800' : 'text-gray-800'
                     }`}>
                       {msg.content.includes('<') ? (
-                        <div dangerouslySetInnerHTML={{ __html: msg.content }} />
+                        <>
+                          {(() => {
+                            const { think, actualContent } = processMessage(msg.content);
+                            return (
+                              <>
+                                <div dangerouslySetInnerHTML={{ __html: actualContent }} />
+                                {think && (
+                                  <div className="mt-2">
+                                    <button
+                                      onClick={() => toggleThinking(index)}
+                                      className="text-sm text-amber-600 hover:text-amber-700 underline"
+                                    >
+                                      {showThinking[index] ? 'Hide thinking process' : 'Show thinking process'}
+                                    </button>
+                                    {showThinking[index] && (
+                                      <div className="mt-2 p-2 bg-amber-50 rounded-lg text-sm">
+                                        <ReactMarkdown>{think}</ReactMarkdown>
+                                      </div>
+                                    )}
+                                  </div>
+                                )}
+                              </>
+                            );
+                          })()}
+                        </>
                       ) : (
                         <ReactMarkdown>{msg.content}</ReactMarkdown>
                       )}
