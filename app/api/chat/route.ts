@@ -47,7 +47,7 @@ export async function POST(req: Request) {
       try {
         const errorResponse = await response.text()
         errorDetail = errorResponse
-      } catch (e) {
+      } catch {
         errorDetail = 'Could not read error response'
       }
 
@@ -81,11 +81,11 @@ export async function POST(req: Request) {
       )
     }
     
-  } catch (error: any) {
+  } catch (error: unknown) {  // 使用 unknown 代替 any
     console.error('API Error:', {
-      name: error?.name,
-      message: error?.message,
-      stack: error?.stack
+      name: error instanceof Error ? error.name : 'Unknown error',
+      message: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : undefined
     })
 
     const status = error instanceof Error && error.name === 'AbortError' ? 408 : 500
