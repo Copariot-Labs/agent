@@ -4,15 +4,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useState } from "react"
 import { useWallet, InputTransactionData } from "@aptos-labs/wallet-adapter-react"
-import { Aptos, AptosConfig, Network } from "@aptos-labs/ts-sdk"
-
-// 创建单例配置
-const config = new AptosConfig({
-  network: Network.TESTNET,
-  fullnode: 'https://aptos.testnet.porto.movementlabs.xyz/v1',
-  faucet: 'https://fund.testnet.porto.movementlabs.xyz/'
-})
-const aptos = new Aptos(config)
+import { aptos, CONTRACT_FUNCTIONS } from "@/utils/contract"
 
 // 添加类型定义
 type SignAndSubmitTransaction = (transaction: InputTransactionData) => Promise<{ hash: string }>;
@@ -28,7 +20,7 @@ export const redeemPIPI = async (
   const response = await signAndSubmitTransaction({
     sender: account.address,
     data: {
-      function: "0x7b6a82f3999a6adf16476a601d678ea549880d786b055c600b5f81794130c89d::weusd_operations::redeemWeUSD",
+      function: CONTRACT_FUNCTIONS.REDEEM_WEUSD,
       functionArguments: [amountWithDecimals, []],
     },
   });

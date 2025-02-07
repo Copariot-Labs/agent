@@ -9,9 +9,8 @@ import { Sparkles, Send } from 'lucide-react'
 import QuickCommands from '@/components/QuickCommands'
 import { useWallet, WalletName } from "@aptos-labs/wallet-adapter-react"
 import { WalletSelector } from '@/components/WalletSelector'
-import { Aptos, AptosConfig, Network } from "@aptos-labs/ts-sdk"
 import { mintPIPI } from '@/components/MintInterface'
-import { getBalances } from '@/utils/balance'
+import { getBalances} from '@/components/BalanceInterface'
 import { redeemPIPI } from '@/components/RedeemInterface'
 import { claimMove, claimUSDT } from '@/components/FaucetInterface'
 import ReactMarkdown from 'react-markdown'
@@ -36,14 +35,6 @@ interface Message {
   actionType?: 'mint' | 'redeem' | 'balance' | 'faucet';
   actionData?: ActionData;
 }
-
-// 在组件外部创建配置
-const config = new AptosConfig({
-  network: Network.TESTNET,
-  fullnode: 'https://aptos.testnet.porto.movementlabs.xyz/v1',
-  faucet: 'https://fund.testnet.porto.movementlabs.xyz/'
-})
-const aptos = new Aptos(config)
 
 export default function Home() {
   const [messages, setMessages] = useState<Message[]>([
@@ -357,7 +348,7 @@ export default function Home() {
       }
 
       setIsThinking(true);
-      const balances = await getBalances(account.address.toString(), aptos);
+      const balances = await getBalances(account.address.toString());
 
       if (type === 'all') {
         setMessages(prev => [...prev, { 
