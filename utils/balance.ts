@@ -1,6 +1,6 @@
 import { Aptos } from "@aptos-labs/ts-sdk";
 
-const CONTRACT_ADDRESS = "0x823856d9721ade6b214e5726e7d65df3651150025b1b8bc8e0d4517f0213449a";
+const CONTRACT_ADDRESS = "0x7b6a82f3999a6adf16476a601d678ea549880d786b055c600b5f81794130c89d";
 
 export interface BalanceResult {
   move: number;
