@@ -46,3 +46,5 @@ This project is configured for direct deployment to GitHub Pages. It will be aut
 - This project is for demonstration purposes only
 - API calls have rate limits
 - Please do not abuse the service
+
+v 0.1
