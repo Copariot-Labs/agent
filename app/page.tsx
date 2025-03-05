@@ -41,7 +41,7 @@ export default function Home() {
   const [messages, setMessages] = useState<Message[]>([
     {
       role: 'assistant',
-      content: 'Hello! I\'m your friendly WeUSD assistant 🐸. I can help you mint/redeem WeUSD and check your token balances. Note: PIPI token will be automatically generated on your first WeUSD mint!'
+      content: 'Hello! I\'m your friendly WEUSD assistant 🐸. I can help you mint/redeem WEUSD and check your token balances. Note: PIPI token will be automatically generated on your first WEUSD mint!'
     }
   ])
   const [input, setInput] = useState('')
@@ -133,13 +133,13 @@ export default function Home() {
       if (!connected) {
         setMessages(prev => [...prev, {
           role: 'assistant',
-          content: 'To start minting WeUSD, we need to connect your wallet first. Click the button below to connect! 🦊',
+          content: 'To start minting WEUSD, we need to connect your wallet first. Click the button below to connect! 🦊',
           isAction: true
         }])
       } else {
         setMessages(prev => [...prev, {
           role: 'assistant',
-          content: 'Great! Wallet connected. Please enter the amount of WeUSD you want to mint. Note: If this is your first mint, you\'ll also receive PIPI tokens!',
+          content: 'Great! Wallet connected. Please enter the amount of WEUSD you want to mint. Note: If this is your first mint, you\'ll also receive PIPI tokens!',
           isAction: true,
           actionType: 'mint'
         }])
@@ -152,13 +152,13 @@ export default function Home() {
       if (!connected) {
         setMessages(prev => [...prev, {
           role: 'assistant',
-          content: 'To redeem WeUSD, we need to connect your wallet first. Would you like to connect now?',
+          content: 'To redeem WEUSD, we need to connect your wallet first. Would you like to connect now?',
           isAction: true
         }])
       } else {
         setMessages(prev => [...prev, {
           role: 'assistant',
-          content: 'Alright, let\'s redeem your WeUSD. Please enter the amount you want to redeem (1% fee will be charged):',
+          content: 'Alright, let\'s redeem your WEUSD. Please enter the amount you want to redeem (1% fee will be charged):',
           isAction: true,
           actionType: 'redeem'
         }])
@@ -365,7 +365,7 @@ export default function Home() {
                 <div class="text-xl font-bold text-rose-800">${balances.usdt.toFixed(2)}</div>
               </div>
               <div class="bg-gradient-to-br from-teal-50 to-emerald-50 p-4 rounded-2xl border border-teal-200">
-                <div class="text-sm text-teal-700 mb-1">WeUSD</div>
+                <div class="text-sm text-teal-700 mb-1">WEUSD</div>
                 <div class="text-xl font-bold text-teal-800">${balances.weusd.toFixed(2)}</div>
               </div>
               <div class="bg-gradient-to-br from-[#FFDD24] to-amber-100 p-4 rounded-2xl border border-amber-200">

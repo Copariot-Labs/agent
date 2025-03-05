@@ -53,22 +53,22 @@ export default function RedeemInterface() {
 
   return (
     <div className="bg-white p-6 rounded-2xl shadow-lg mb-6">
-      <h3 className="text-xl font-semibold mb-4 text-purple-600">Redeem WeUSD</h3>
+      <h3 className="text-xl font-semibold mb-4 text-purple-600">Redeem WEUSD</h3>
       <div className="mb-2 text-sm text-gray-600">
-        Note: 1% fee will be charged for WeUSD redemption
+        Note: 1% fee will be charged for WEUSD redemption
       </div>
       <Input
         type="number"
-        placeholder="Enter amount of WeUSD to redeem"
+        placeholder="Enter amount of WEUSD to redeem"
         value={amount}
         onChange={(e) => setAmount(e.target.value)}
         className="mb-2 rounded-full"
       />
       {amount && (
         <div className="text-sm text-gray-600 mb-4">
-          Fee: {fee.toFixed(6)} WeUSD
+          Fee: {fee.toFixed(6)} WEUSD
           <br />
-          You will receive: {(parseFloat(amount) - fee).toFixed(6)} WeUSD
+          You will receive: {(parseFloat(amount) - fee).toFixed(6)} WEUSD
         </div>
       )}
       <Button 
@@ -76,7 +76,7 @@ export default function RedeemInterface() {
         disabled={isLoading || !amount}
         className="w-full bg-gradient-to-r from-pink-400 to-purple-400 hover:from-pink-500 hover:to-purple-500 text-white rounded-full py-2 transition-all duration-200 ease-in-out transform hover:scale-105"
       >
-        {isLoading ? 'Redeeming...' : 'Redeem WeUSD'}
+        {isLoading ? 'Redeeming...' : 'Redeem WEUSD'}
       </Button>
     </div>
   )

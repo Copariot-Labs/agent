@@ -100,7 +100,7 @@ export default function BalanceInterface() {
             <div className="text-xl font-bold text-rose-800">{balance.usdt.toFixed(2)}</div>
           </div>
           <div className="bg-gradient-to-br from-teal-50 to-emerald-50 p-4 rounded-2xl border border-teal-200">
-            <div className="text-sm text-teal-700 mb-1">WeUSD</div>
+            <div className="text-sm text-teal-700 mb-1">WEUSD</div>
             <div className="text-xl font-bold text-teal-800">{balance.weusd.toFixed(2)}</div>
           </div>
           <div className="bg-gradient-to-br from-[#FFDD24] to-amber-100 p-4 rounded-2xl border border-amber-200">

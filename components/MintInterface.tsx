@@ -51,13 +51,13 @@ export default function MintInterface() {
 
   return (
     <div className="bg-white p-6 rounded-2xl shadow-lg mb-6">
-      <h3 className="text-xl font-semibold mb-4 text-purple-600">Mint WeUSD</h3>
+      <h3 className="text-xl font-semibold mb-4 text-purple-600">Mint WEUSD</h3>
       <div className="mb-2 text-sm text-gray-600">
         First-time minters will receive PIPI tokens automatically!
       </div>
       <Input
         type="number"
-        placeholder="Enter amount of WeUSD to mint"
+        placeholder="Enter amount of WEUSD to mint"
         value={amount}
         onChange={(e) => setAmount(e.target.value)}
         className="mb-4 rounded-full"
@@ -67,7 +67,7 @@ export default function MintInterface() {
         disabled={isLoading || !amount}
         className="w-full bg-gradient-to-r from-pink-400 to-purple-400 hover:from-pink-500 hover:to-purple-500 text-white rounded-full py-2 transition-all duration-200 ease-in-out transform hover:scale-105"
       >
-        {isLoading ? 'Minting...' : 'Mint WeUSD'}
+        {isLoading ? 'Minting...' : 'Mint WEUSD'}
       </Button>
     </div>
   )
