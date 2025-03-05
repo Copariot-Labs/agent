@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server'
 
-// 设置路由配置
-export const runtime = 'edge' // 使用 Edge Runtime
-export const maxDuration = 300 // 设置最大持续时间为 300 秒
+// Set up route configurations
+export const runtime = 'edge' // Use Edge Runtime
+export const maxDuration = 300 // Set maximum duration to 300 seconds
 
 if (!process.env.API_KEY) {
   throw new Error('API_KEY is required')
@@ -13,17 +13,17 @@ export async function POST(req: Request) {
     const controller = new AbortController()
     const timeoutId = setTimeout(() => controller.abort(), 120000)
 
-    // 添加请求体的日志
+    // Log the request body
     const body = await req.json()
     console.log('Request body:', body)
 
-    // 记录完整的请求信息
+    // Log the complete request information
     const requestInfo = {
       url: 'https://chat.pipimove.com/chat',
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'X-API-Key': process.env.API_KEY!.substring(0, 4) + '...' // 只记录部分 API key
+        'X-API-Key': process.env.API_KEY!.substring(0, 4) + '...' // Only log part of the API key
       },
       body: body
     }
@@ -42,7 +42,7 @@ export async function POST(req: Request) {
     clearTimeout(timeoutId)
 
     if (!response.ok) {
-      // 尝试读取错误响应的详细信息
+      // Attempt to read the detailed information of the error response
       let errorDetail = ''
       try {
         const errorResponse = await response.text()
@@ -68,7 +68,7 @@ export async function POST(req: Request) {
 
     try {
       const data = await response.json()
-      console.log('Successful response:', data)  // 记录成功的响应
+      console.log('Successful response:', data)  // Log the successful response
       return NextResponse.json(data)
     } catch (parseError) {
       console.error('JSON parse error:', parseError)
@@ -81,7 +81,7 @@ export async function POST(req: Request) {
       )
     }
     
-  } catch (error: unknown) {  // 使用 unknown 代替 any
+  } catch (error: unknown) {  // Use unknown instead of any
     console.error('API Error:', {
       name: error instanceof Error ? error.name : 'Unknown error',
       message: error instanceof Error ? error.message : 'Unknown error',

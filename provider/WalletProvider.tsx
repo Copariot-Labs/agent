@@ -22,7 +22,7 @@ export const WalletProvider = ({ children }: PropsWithChildren) => {
       autoConnect={false}
       dappConfig={config}
       onError={(error) => {
-        console.error("钱包错误:", error);
+        console.error("Wallet error:", error);
       }}
     >
       {children}

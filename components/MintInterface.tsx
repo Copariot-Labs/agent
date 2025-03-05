@@ -6,10 +6,10 @@ import { useState } from "react"
 import { InputTransactionData, useWallet } from "@aptos-labs/wallet-adapter-react"
 import { aptos, CONTRACT_FUNCTIONS } from "@/utils/contract"
 
-// 添加类型定义
+// Add type definition
 type SignAndSubmitTransaction = (transaction: InputTransactionData) => Promise<{ hash: string }>;
 
-// 导出 mint 函数供其他组件使用
+// Export mint function for other components to use
 export const mintPIPI = async (
   amount: string, 
   signAndSubmitTransaction: SignAndSubmitTransaction, 

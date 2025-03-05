@@ -49,10 +49,10 @@ export default function Home() {
   const [isThinking, setIsThinking] = useState(false)
   const [isWalletSelectorOpen, setIsWalletSelectorOpen] = useState(false)
 
-  // 使用 useWallet hook
+  // useWallet hook
   const { connect, disconnect, account, connected, wallets, signAndSubmitTransaction } = useWallet();
 
-  // 添加一个新的状态来控制思考过程的显示
+  // Add a new state to control the display of the thinking process
   const [showThinking, setShowThinking] = useState<{[key: number]: boolean}>({});
 
   const toggleThinking = (index: number) => {
@@ -62,7 +62,7 @@ export default function Home() {
     }));
   };
 
-  // 处理消息内容，分离思考过程和实际回复
+  // Process message content, separate thinking process and actual reply
   const processMessage = (content: string) => {
     const thinkMatch = content.match(/<think>([\s\S]*?)<\/think>/);
     const think = thinkMatch ? thinkMatch[1].trim() : null;
@@ -80,11 +80,11 @@ export default function Home() {
 
   const handleWalletSelect = async (walletName: WalletName) => {
     try {
-      console.log("尝试连接钱包:", walletName);
+      console.log("Trying to connect wallet:", walletName);
       await connect(walletName);
     } catch (error) {
-      console.error("连接钱包失败:", error);
-      alert("连接钱包失败，请确保已安装所选钱包并允许连接。");
+      console.error("Failed to connect wallet:", error);
+      alert("Failed to connect wallet, please make sure the selected wallet is installed and allowed to connect.");
     }
   }
 
@@ -97,7 +97,7 @@ export default function Home() {
     }
   }, [connected, account]);
 
-  // 添加自动滚动效果
+  // Add automatic scrolling effect
   useEffect(() => {
     const scrollToBottom = () => {
       if (scrollAreaRef.current) {
@@ -109,7 +109,7 @@ export default function Home() {
     };
 
     scrollToBottom();
-    // 使用 setTimeout 确保在 DOM 更新后滚动
+    // Use setTimeout to ensure scrolling after DOM update
     setTimeout(scrollToBottom, 100);
   }, [messages]);
 
@@ -227,13 +227,13 @@ export default function Home() {
 
       const data = await response.json()
 
-      // 直接使用原始的 markdown 文本
+      // Use the original markdown text directly
       setMessages(prev => [...prev, {
         role: 'assistant',
         content: data.text
       }])
 
-      // 如果检测到特定意图，添加相应的操作提示
+      // If a specific intent is detected, add the corresponding action prompt
       if (data.intent) {
         const actionMessage = { role: 'assistant', content: '', isAction: true } as Message;
 
@@ -267,7 +267,7 @@ export default function Home() {
       if (error instanceof DOMException && error.name === 'AbortError') {
         errorMessage = 'Request timeout. The server is taking too long to respond. Please try again.'
       } else if (error instanceof Error) {
-        // 添加更具体的错误信息
+        // Add more specific error information
         errorMessage = `Error: ${error.message} 😅`
       }
 

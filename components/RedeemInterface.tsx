@@ -6,10 +6,10 @@ import { useState } from "react"
 import { useWallet, InputTransactionData } from "@aptos-labs/wallet-adapter-react"
 import { aptos, CONTRACT_FUNCTIONS } from "@/utils/contract"
 
-// 添加类型定义
+// Add type definition
 type SignAndSubmitTransaction = (transaction: InputTransactionData) => Promise<{ hash: string }>;
 
-// 导出 redeem 函数供其他组件使用
+// Export redeem function for other components to use
 export const redeemPIPI = async (
   amount: string,
   signAndSubmitTransaction: SignAndSubmitTransaction,
@@ -48,7 +48,7 @@ export default function RedeemInterface() {
     }
   }
 
-  // 计算手续费
+  // Calculate the fee
   const fee = amount ? parseFloat(amount) * 0.01 : 0
 
   return (

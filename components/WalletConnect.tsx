@@ -12,21 +12,21 @@ export default function WalletConnect() {
       await disconnect();
     } else {
       try {
-        // 尝试连接到第一个可用的钱包
+
         if (wallets && wallets.length > 0) {
           await connect(wallets[0].name as WalletName);
         } else {
-          // 如果没有检测到钱包，提示用户安装
-          alert("请先安装 Petra 钱包扩展！");
+
+          alert("Please install the Petra wallet extension first!");
         }
       } catch (error) {
-        console.error("连接钱包失败:", error);
-        alert("连接钱包失败，请确保已安装 Petra 钱包并允许连接。");
+        console.error("Failed to connect wallet:", error);
+        alert("Failed to connect wallet, please ensure Petra wallet is installed and allowed to connect.");
       }
     }
   }
 
-  // 监听钱包连接状态
+  // Listen to wallet connection status
   useEffect(() => {
     if (connected) {
     }
@@ -39,8 +39,8 @@ export default function WalletConnect() {
         className="bg-gradient-to-r from-pink-400 to-purple-400 text-white"
       >
         {connected 
-          ? `已连接: ${account?.address?.toString().slice(0, 6)}...${account?.address?.toString().slice(-4)}`
-          : "连接钱包"}
+          ? `Connected: ${account?.address?.toString().slice(0, 6)}...${account?.address?.toString().slice(-4)}`
+          : "Connect Wallet"}
       </Button>
     </div>
   )

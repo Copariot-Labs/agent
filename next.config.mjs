@@ -8,8 +8,8 @@ const nextConfig = {
       {
         source: '/api/chat',
         destination: process.env.VERCEL
-          ? '/api/chat'  // Vercel 环境不需要重写
-          : 'https://chat.pipimove.com'  // 本地开发重写到外部 URL
+          ? '/api/chat'  // Vercel environment does not need rewriting
+          : 'https://chat.pipimove.com'  // Local development rewrites to external URL
       }
     ]
   }

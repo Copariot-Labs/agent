@@ -1,6 +1,6 @@
 import { Aptos, AptosConfig, Network } from "@aptos-labs/ts-sdk"
 
-// 创建单例配置
+// Create a singleton configuration
 export const config = new AptosConfig({
   network: Network.TESTNET,
   fullnode: 'https://mainnet.movementnetwork.xyz/v1',
@@ -9,13 +9,13 @@ export const config = new AptosConfig({
 
 export const aptos = new Aptos(config)
 
-// 合约地址
+// Contract address
 export const CONTRACT_ADDRESS = "0xed805e77c40d7e6ac5cd3e67514c485176621a2aa21e860cd515121d44a2f83d"
 
-// 定义函数路径类型
+// Define the type of contract function path
 type ContractFunction = `${typeof CONTRACT_ADDRESS}::${string}::${string}`
 
-// 合约函数
+// Contract functions
 export const CONTRACT_FUNCTIONS: Record<string, ContractFunction> = {
   // Balance functions
   GET_MOVE_BALANCE: `${CONTRACT_ADDRESS}::faucet::get_move_balance`,
